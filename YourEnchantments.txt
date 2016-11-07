@@ -1,0 +1,8 @@
+Name: MyEnchantment
+Desc: Messes up Fools
+Particle: HEARTS
+ProcRate: 50
+Type: [BUFF | ATTACK | DEFENCE]
+Modifiers:
+	- DAMAGE(5)
+	- LAUNCH(SNOWBALL)
