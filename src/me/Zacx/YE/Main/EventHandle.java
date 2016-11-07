@@ -1,8 +1,10 @@
 package me.Zacx.YE.Main;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,27 +25,30 @@ public class EventHandle implements Listener {
 	@EventHandler
 	public void onDamage(EntityDamageByEntityEvent e) {
 		
-		if (!(e.getDamager() instanceof Player))
+		if (!(e.getDamager() instanceof Player) || !(e.getEntity() instanceof LivingEntity))
 			return;
 		
 		Player p = (Player) e.getDamager();
-		Entity tar = e.getEntity();
+		LivingEntity tar = (LivingEntity) e.getEntity();
 		
 		//get enchantments on p, check type, proc
 		
-		List<YEnchant> enchs = YEnchant.getItemEnchantments(p.getItemInHand());
+		Map<YEnchant, Integer> enchMap = YEnchant.getItemEnchantments(p.getItemInHand());
+		List<YEnchant> enchs = new LinkedList<YEnchant>(enchMap.keySet());
 		for (int i = 0; i < enchs.size(); i++) {
 			YEnchant ench = enchs.get(i);
-			ench.proc(p);
+			int lvl = enchMap.get(ench);
+			ench.proc(p, tar, lvl);
 		}
 		
 		//get enchantmets on tar, check type, proc
-		enchs = YEnchant.getArmourEnchantments(p);
-		
+		enchMap = YEnchant.getArmourEnchantments(p);
+		enchs = new LinkedList<YEnchant> (enchMap.keySet());
 		for (int i = 0; i < enchs.size(); i++) {
 			YEnchant ench = enchs.get(i);
+			int lvl = enchMap.get(ench);
 			if (ench.getType() == EnchantmentType.DEFENCE) {
-				ench.proc(p);
+				ench.proc(p, tar, lvl);
 			}
 		}
 		

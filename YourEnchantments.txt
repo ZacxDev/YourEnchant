@@ -2,6 +2,8 @@ Name: MyEnchantment
 Desc: Messes up Fools
 Particle: HEARTS
 ProcRate: 50
+PlayerPotion: HEAL
+TargetPotion: POISON
 Type: [BUFF | ATTACK | DEFENCE]
 Modifiers:
 	- DAMAGE(5)

@@ -73,8 +73,10 @@ public class FileParser {
 				if (line.startsWith("-")) {
 					String s = line.substring(line.indexOf(" "), line.indexOf("(")).trim();
 					String arg = line.substring(line.indexOf("(") + 1, line.indexOf(")"));
-					ye.addModifier(Modifier.valueOf(s));
-					
+					Modifier m = Modifier.valueOf(s);
+					System.out.println("[PARSE] " + arg);
+					m.setProperties(arg);
+					ye.addModifier(m);
 				}
 				
 
