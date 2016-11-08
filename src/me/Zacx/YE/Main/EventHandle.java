@@ -12,8 +12,10 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -68,6 +70,30 @@ public class EventHandle implements Listener {
 		}
 	}
 	
+	@EventHandler
+	public void onInteract(PlayerInteractEvent e) {
+		
+		Player p = e.getPlayer();
+		ItemStack is = p.getItemInHand();
+		Action a = e.getAction();
+		
+		if (a == Action.LEFT_CLICK_AIR || a == Action.LEFT_CLICK_BLOCK) {
+			
+			Map<YEnchant, Integer> enchMap = YEnchant.getItemEnchantments(is);
+			List<YEnchant> enchs = new ArrayList<YEnchant>(enchMap.keySet());
+			
+			for (int i = 0; i < enchs.size(); i++) {
+				YEnchant ench = enchs.get(i);
+				int lvl = enchMap.get(ench);
+				if (ench.getType() != EnchantmentType.BUFF) {
+					//loop abilities TODO for () {}
+				}
+			}
+			
+		}
+		
+	}
+	
 	
 	public boolean hasEnchantment(ItemStack item, String enchantmentName,
 			int level, ArrayList<String> lore) {
@@ -109,12 +135,12 @@ public class EventHandle implements Listener {
 					p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
 					current.setType(Material.AIR);
 				} else {
-					p.sendMessage("§4That item cannot use this enchantment!");
+					p.sendMessage("ï¿½4That item cannot use this enchantment!");
 				}
 
 			} else {
 				ArrayList<String> lore = new ArrayList<String>();
-				lore.add("§e§l" + enchantmentName );
+				lore.add("ï¿½eï¿½l" + enchantmentName );
 
 				meta.setLore(lore);
 				item.setItemMeta(meta);

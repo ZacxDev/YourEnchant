@@ -20,7 +20,7 @@ import me.Zacx.YE.Main.Access;
 import me.Zacx.YE.Main.Core;
 
 public enum Modifier {
-	DAMAGE(), HEAL(), LAUNCH(), TELEPORT(), EXPLOSION(), ARMOUR_DAMAGE();
+	DAMAGE(), HEAL(), TELEPORT(), EXPLOSION(), ARMOUR_DAMAGE();
 	
 	public int multi, tpBuffer;
 	public Material mat;
@@ -59,8 +59,6 @@ public enum Modifier {
 			tar.damage(multi);
 		} else if (this == HEAL) {
 			p.setHealth(p.getHealth() + multi);
-		} else if (this == LAUNCH) {
-			mg(1, tar.getLocation());
 		} else if (this == TELEPORT) {
 			p.teleport(rdmLoc(p.getLocation()));
 		} else if (this == EXPLOSION) {
@@ -123,44 +121,5 @@ public enum Modifier {
 		return l.add(new Location(l.getWorld(), r.nextInt(tpBuffer), 0, r.nextInt(tpBuffer)));
 	}
 	
-	private void mg(final int x, final Location l) {
-		 
-        final Bat bat = (Bat) l.getWorld().spawnEntity(l.add(1, 0, 0), EntityType.BAT);
- 
-        Access.c.getServer().getScheduler().scheduleSyncRepeatingTask(Access.c, new Runnable() {
- 
-            @Override
-            public void run() {
-                List<Entity> lEnt = bat.getNearbyEntities(10, 10, 10);
-                for (Entity ent : lEnt) { 
-                    if (ent instanceof Player) {
-                        Player p = (Player) ent;
- 
-                        int h = 1;
-                        if (p.getLocation().distance(bat.getLocation()) >= 8) {
-                            h = 2;
-                        }
-                        if (p.isFlying()) {
-                            h = 1;
-                        }
- 
-                        Vector v1 = l.toVector();
-                        Vector v2 = p.getLocation().add(0, h, 0).toVector();
- 
-                        Vector st = v1.subtract(v2).normalize();
-                        st.setX(st.getX() * -1);
-                        st.setY(st.getY() * -1);
-                        st.setZ(st.getZ() * -1);
- 
-                        Snowball sb = bat.launchProjectile(Snowball.class);
-                        Entity e = l.getWorld().dropItemNaturally(l, new ItemStack(mat));
-                        sb.setPassenger(e);
-                        sb.setVelocity(st);
-                        bat.remove();
-                    }
-                }
-            }
-        }, 1, 12);
-    }
-	
+		
 }

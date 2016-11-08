@@ -31,6 +31,7 @@ public class YEnchant {
 	private Sound sound;
 	private EnchantmentType type;
 	private List<Modifier> modifiers;
+	public List<Ability> abilities;
 	private Random r;
 	private ItemStack item;
 	
@@ -39,6 +40,7 @@ public class YEnchant {
 		this.name = name;
 		enchants.add(this);
 		modifiers = new ArrayList<Modifier>();
+		abilities = new ArrayList<Ability>();
 		r = new Random();
 	}
 	

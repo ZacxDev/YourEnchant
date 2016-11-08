@@ -44,6 +44,7 @@ public class FileParser {
 
 			boolean readingEnchant = false;
 			boolean readingModifiers = false;
+			boolean readingAbilities = false;
 			
 			YEnchant ye = null;
 			
@@ -54,7 +55,7 @@ public class FileParser {
 					line = br.readLine();
 					continue;
 				}
-				line = line.replaceAll("&", "§");
+				line = line.replaceAll("&", "ï¿½");
 				
 				if (!readingEnchant || line.contains("Name:")) {
 					readingEnchant = true;
@@ -68,9 +69,10 @@ public class FileParser {
 				
 				if (line.contains("Modifiers")) {
 					readingModifiers = true;
+					readingAbilities = true;
 				}
 				
-				if (line.startsWith("-")) {
+				if (line.startsWith("-") && readingModifiers) {
 					String s = line.substring(line.indexOf(" "), line.indexOf("(")).trim();
 					String arg = line.substring(line.indexOf("(") + 1, line.indexOf(")"));
 					Modifier m = Modifier.valueOf(s);
@@ -79,6 +81,14 @@ public class FileParser {
 					ye.addModifier(m);
 				}
 				
+				if (line.contains("Abilities")) {
+					readingAbilities = true;
+					readingModifiers = false;
+				}
+				
+				if (line.startsWith("-") && readingAbilities) {
+					//TODO read abilities
+				}
 
 				line = br.readLine();
 			}
