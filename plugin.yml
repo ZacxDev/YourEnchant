@@ -1,0 +1,10 @@
+name: YourEnchant
+main: me.Zacx.YE.Main.Core
+version: 0.1
+commands:
+   testitem:
+      description: TestItem.
+      usage: /<command>
+   enchant:
+      description: TestItem.
+      usage: /<command>
