@@ -12,6 +12,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import me.Zacx.YE.Enchantments.Ability;
 import me.Zacx.YE.Enchantments.Modifier;
 import me.Zacx.YE.Enchantments.YEnchant;
 import me.Zacx.YE.Main.Access;
@@ -87,7 +88,11 @@ public class FileParser {
 				}
 				
 				if (line.startsWith("-") && readingAbilities) {
-					//TODO read abilities
+					String s = line.substring(line.indexOf(" "), line.indexOf("(")).trim();
+					String arg = line.substring(line.indexOf("(") + 1, line.indexOf(")"));
+					Ability ab = Ability.valueOf(s);
+					ab.setProperties(arg);
+					ye.addAbility(ab);
 				}
 
 				line = br.readLine();

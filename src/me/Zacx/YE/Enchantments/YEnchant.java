@@ -124,6 +124,10 @@ public class YEnchant {
 		modifiers.add(m);
 	}
 	
+	public void addAbility(Ability ab) {
+		abilities.add(ab);
+	}
+	
 	public EnchantmentType getType() {
 		return type;
 	}

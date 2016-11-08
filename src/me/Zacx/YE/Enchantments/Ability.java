@@ -22,7 +22,8 @@ public enum Ability {
 	
 	
 	private Material mat;
-	
+	private long cooldown;
+	private int amount;
 	
 	public void play(Player p, LivingEntity tar) {
 		if (this == LAUNCH) {
@@ -33,12 +34,19 @@ public enum Ability {
 	
 	public void setProperties(String line) {
 		line = line.trim();
-		String s = line.substring(line.lastIndexOf(":") + 2);
-		
+		String[] args = line.split(",");
+		for (int i = 0; i < args.length; i++) {
+			String s = args[i].trim().replaceAll(",", "");
 		if (mat == null && Material.getMaterial(s) != null) {
 			mat = Material.getMaterial(s);
 		}
-		
+		if (cooldown == 0) {
+			cooldown = Long.parseLong(s);
+		}
+		if (amount == 0) {
+			amount = Integer.parseInt(s);
+		}
+		}
 	}
 	
 	
