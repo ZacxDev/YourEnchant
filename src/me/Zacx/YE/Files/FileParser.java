@@ -28,7 +28,7 @@ public class FileParser {
 	public void parseEnchants() {
 		
 		File folder = c.getDataFolder();
-		File ranksFile = new File(c.getDataFolder() + "/kits.txt");
+		File ranksFile = new File(c.getDataFolder() + "/YourEnchantments.txt");
 
 		int i = 0;
 		try {
@@ -39,9 +39,8 @@ public class FileParser {
 				ranksFile.createNewFile();
 
 			BufferedReader br = new BufferedReader(
-					new FileReader(c.getDataFolder() + "/kits.txt"));
+					new FileReader(c.getDataFolder() + "/YourEnchantments.txt"));
 			String line = br.readLine();
-			line = br.readLine();
 
 			boolean readingEnchant = false;
 			boolean readingModifiers = false;
@@ -55,11 +54,12 @@ public class FileParser {
 					line = br.readLine();
 					continue;
 				}
-				line = line.replaceAll("&", "ï¿½");
+				line = line.replaceAll("&", "§");
 				
 				if (!readingEnchant || line.contains("Name:")) {
 					readingEnchant = true;
 					ye = new YEnchant(line);
+					i++;
 				}
 				
 				if (readingEnchant) {
@@ -83,9 +83,9 @@ public class FileParser {
 				line = br.readLine();
 			}
 
-			if (line == null) {
-				YEnchant.enchants.remove(YEnchant.enchants.size() - 1);
-				i--;
+			if (line == null && !(YEnchant.enchants.isEmpty())) {
+				//YEnchant.enchants.remove(YEnchant.enchants.size() - 1);
+				//i--;
 			}
 			br.close();
 		} catch (FileNotFoundException e) {

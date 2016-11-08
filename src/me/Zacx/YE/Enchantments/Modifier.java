@@ -3,6 +3,7 @@ package me.Zacx.YE.Enchantments;
 import java.util.List;
 import java.util.Random;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Bat;
@@ -19,7 +20,7 @@ import me.Zacx.YE.Main.Access;
 import me.Zacx.YE.Main.Core;
 
 public enum Modifier {
-	DAMAGE(), HEAL(), LAUNCH(), TELEPORT(), EXPLOSION(), ARMOUR_DAMAGE(), POTION();
+	DAMAGE(), HEAL(), LAUNCH(), TELEPORT(), EXPLOSION(), ARMOUR_DAMAGE();
 	
 	public int multi, tpBuffer;
 	public Material mat;
@@ -131,7 +132,7 @@ public enum Modifier {
             @Override
             public void run() {
                 List<Entity> lEnt = bat.getNearbyEntities(10, 10, 10);
-                for (Entity ent : lEnt) {
+                for (Entity ent : lEnt) { 
                     if (ent instanceof Player) {
                         Player p = (Player) ent;
  
@@ -152,6 +153,8 @@ public enum Modifier {
                         st.setZ(st.getZ() * -1);
  
                         Snowball sb = bat.launchProjectile(Snowball.class);
+                        Entity e = l.getWorld().dropItemNaturally(l, new ItemStack(mat));
+                        sb.setPassenger(e);
                         sb.setVelocity(st);
                         bat.remove();
                     }
