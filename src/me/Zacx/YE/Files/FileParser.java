@@ -56,7 +56,11 @@ public class FileParser {
 					line = br.readLine();
 					continue;
 				}
-				line = line.replaceAll("&", "ï¿½");
+								
+				if (line.startsWith("#"))
+					line = br.readLine();
+				
+				line = line.replaceAll("&", "§");
 				
 				if (!readingEnchant || line.contains("Name:")) {
 					readingEnchant = true;
@@ -70,7 +74,7 @@ public class FileParser {
 				
 				if (line.contains("Modifiers")) {
 					readingModifiers = true;
-					readingAbilities = true;
+					readingAbilities = false;
 				}
 				
 				if (line.startsWith("-") && readingModifiers) {

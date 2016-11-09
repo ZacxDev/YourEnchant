@@ -1,7 +1,16 @@
 package me.Zacx.YE.Main;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -15,6 +24,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import me.Zacx.YE.Display.EnchantMenu;
+import me.Zacx.YE.Enchantments.Ability;
 import me.Zacx.YE.Enchantments.YEnchant;
 import me.Zacx.YE.Files.FileParser;
 
@@ -22,8 +32,13 @@ public class Core extends JavaPlugin {
 
 	private FileParser fp;
 	private EnchantMenu eMenu;
+	private Random r;
+	public static String uid = "%%__USER__%%";
+	public static String licID;
 	
 	public Core() {
+		r = new Random();
+		licID = r.nextInt(1000) + "-" + uid + "-" + r.nextInt(1000);
 		new Access(this);
 	}
 	
@@ -33,6 +48,17 @@ public class Core extends JavaPlugin {
 		fp.parseEnchants();
 		new EventHandle(this);
 		eMenu = new EnchantMenu();
+		
+		
+	Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
+			
+			public void run() {
+				for (int i = 0; i < Ability.values().length; i++) {
+					Ability.values()[i].tick();
+				}
+			}
+			
+		}, 1L, 20L);
 	}
 	
 	@Override
@@ -80,5 +106,55 @@ public class Core extends JavaPlugin {
 			}
 		return s;
 	}
+	
+	public boolean sts = true;
+    public void auth()
+    {
+      try
+      {
+        URLConnection localURLConnection = new URL("Your website link").openConnection();
+        localURLConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+        localURLConnection.connect();
+       
+        BufferedReader localBufferedReader = new BufferedReader(new InputStreamReader(localURLConnection.getInputStream(), Charset.forName("UTF-8")));
+        BufferedWriter localBufferedWRiter = new BufferedWriter(new OutputStream(localURLConnection.getOutputStream()), Charset.forName("UTF-8"));
+       
+        StringBuilder localStringBuilder = new StringBuilder();
+        String str1; 
+        while ((str1 = localBufferedReader.readLine()) != null) {
+          localStringBuilder.append(str1);
+        }
+        String str2 = localStringBuilder.toString();
+        if (!str2.contains(String.valueOf(uid)))
+        {
+          disableLeak();
+          return;
+        }
+        this.sts = true;
+      }
+      catch (IOException localIOException)
+      {
+        localIOException.printStackTrace();
+        disableNoInternet();
+        return;
+      }
+    }
+   
+    public void disableLeak()
+    {
+        int x = 0;
+        while(x != 5000){
+          Bukkit.broadcastMessage(ChatColor.RED + "You leaked my plugin, 5k broadcast!");
+          x++;
+        }
+      getServer().getPluginManager().disablePlugin(this);
+      sts = false;
+    }
+   
+    public void disableNoInternet() {
+        Bukkit.broadcastMessage(ChatColor.RED + "You don't have a valid internet connection, please connect to the internet for the plugin to work!");
+        getServer().getPluginManager().disablePlugin(this);
+        sts = false;
+    }
 	
 }

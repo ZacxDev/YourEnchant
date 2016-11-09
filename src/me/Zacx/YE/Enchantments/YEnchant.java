@@ -64,7 +64,7 @@ public class YEnchant {
 	
 	
 	public void setProperty(String line) {
-		if (!line.contains("Modifiers:") && line.contains(":")) {
+		if (!line.contains("Modifiers:") && line.contains(":") && !line.contains("Abilities:")) {
 		String p = "";
 		String s = line.substring(line.lastIndexOf(":") + 2);
 		line = line.toLowerCase();

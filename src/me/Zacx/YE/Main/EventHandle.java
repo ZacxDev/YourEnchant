@@ -1,6 +1,7 @@
 package me.Zacx.YE.Main;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -77,7 +78,7 @@ public class EventHandle implements Listener {
 		ItemStack is = p.getItemInHand();
 		Action a = e.getAction();
 		
-		if (a == Action.LEFT_CLICK_AIR || a == Action.LEFT_CLICK_BLOCK) {
+		if (a == Action.RIGHT_CLICK_AIR || a == Action.RIGHT_CLICK_BLOCK) {
 			
 			Map<YEnchant, Integer> enchMap = YEnchant.getItemEnchantments(is);
 			List<YEnchant> enchs = new ArrayList<YEnchant>(enchMap.keySet());
@@ -86,7 +87,9 @@ public class EventHandle implements Listener {
 				YEnchant ench = enchs.get(i);
 				int lvl = enchMap.get(ench);
 				if (ench.getType() != EnchantmentType.BUFF) {
-					//loop abilities TODO for () {}
+					for (int n = 0; n < ench.abilities.size(); n++) {
+						ench.abilities.get(n).play(p);
+					}
 				}
 			}
 			
