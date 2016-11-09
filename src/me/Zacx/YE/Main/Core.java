@@ -1,13 +1,8 @@
 package me.Zacx.YE.Main;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.URL;
-import java.net.URLConnection;
-import java.nio.charset.Charset;
+import java.io.FileNotFoundException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -23,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import me.Zacx.OKits.jpaste.pastebin.Pastebin;
 import me.Zacx.YE.Display.EnchantMenu;
 import me.Zacx.YE.Enchantments.Ability;
 import me.Zacx.YE.Enchantments.YEnchant;
@@ -34,12 +30,27 @@ public class Core extends JavaPlugin {
 	private EnchantMenu eMenu;
 	private Random r;
 	public static String uid = "%%__USER__%%";
-	public static String licID;
+	public static String licID = "(";
 	
 	public Core() {
 		r = new Random();
-		licID = r.nextInt(1000) + "-" + uid + "-" + r.nextInt(1000);
 		new Access(this);
+		
+		try {
+			  InetAddress inet = InetAddress.getLocalHost();
+			  InetAddress[] ips = InetAddress.getAllByName(inet.getCanonicalHostName());
+			  if (ips  != null ) {
+			    for (int i = 0; i < ips.length; i++) {
+			      System.out.println(ips[i]);
+			      licID += ips[i];
+			    }
+			    licID += ")";
+			  }
+			} catch (UnknownHostException e) {
+
+			}
+		
+		auth();
 	}
 	
 	
@@ -110,45 +121,22 @@ public class Core extends JavaPlugin {
 	public boolean sts = true;
     public void auth()
     {
-      try
-      {
-        URLConnection localURLConnection = new URL("Your website link").openConnection();
-        localURLConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
-        localURLConnection.connect();
-       
-        BufferedReader localBufferedReader = new BufferedReader(new InputStreamReader(localURLConnection.getInputStream(), Charset.forName("UTF-8")));
-        BufferedWriter localBufferedWRiter = new BufferedWriter(new OutputStream(localURLConnection.getOutputStream()), Charset.forName("UTF-8"));
-       
-        StringBuilder localStringBuilder = new StringBuilder();
-        String str1; 
-        while ((str1 = localBufferedReader.readLine()) != null) {
-          localStringBuilder.append(str1);
-        }
-        String str2 = localStringBuilder.toString();
-        if (!str2.contains(String.valueOf(uid)))
-        {
-          disableLeak();
-          return;
-        }
-        this.sts = true;
-      }
-      catch (IOException localIOException)
-      {
-        localIOException.printStackTrace();
-        disableNoInternet();
-        return;
-      }
+    	String p = Pastebin.getContents("");
+    	if (p.contains(licID)) {
+    		return;
+    	} else {
+    		try {
+    		disableLeak();
+    		} catch (FileNotFoundException e) {}
+    }
     }
    
-    public void disableLeak()
+    public void disableLeak() throws FileNotFoundException
     {
-        int x = 0;
-        while(x != 5000){
-          Bukkit.broadcastMessage(ChatColor.RED + "You leaked my plugin, 5k broadcast!");
-          x++;
-        }
-      getServer().getPluginManager().disablePlugin(this);
+          System.out.println("[Error] @ 0xb517c");
+          getServer().getPluginManager().disablePlugin(this);
       sts = false;
+      throw new FileNotFoundException();
     }
    
     public void disableNoInternet() {
