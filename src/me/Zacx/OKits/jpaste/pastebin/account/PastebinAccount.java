@@ -249,6 +249,7 @@ public class PastebinAccount {
 
 		String response = Web.getContents(Pastebin.API_POST_LINK, post);
 		if (response.equals("No pastes found.")) {
+			System.out.println(response);
 			return null;
 		}
 
@@ -296,6 +297,7 @@ public class PastebinAccount {
 								: PasteExpireDate
 										.getExpireDate((int) (expireDate - pasteDate)));
 
+						
 						PastebinLink pastebinLink = new PastebinLink(paste,
 								pasteURL, new Date(pasteDate * 1000));
 						pastebinLink.setHits(hits);
