@@ -1,11 +1,16 @@
 package me.Zacx.YE.Main;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.net.InetAddress;
+import java.net.URL;
+import java.net.URLConnection;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Scanner;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -19,11 +24,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import me.Zacx.OKits.Net.MAC;
-import me.Zacx.OKits.jpaste.pastebin.Pastebin;
-import me.Zacx.OKits.jpaste.pastebin.PastebinLink;
-import me.Zacx.OKits.jpaste.pastebin.account.PastebinAccount;
-import me.Zacx.OKits.jpaste.pastebin.exceptions.LoginException;
-import me.Zacx.OKits.jpaste.pastebin.exceptions.ParseException;
 import me.Zacx.YE.Display.EnchantMenu;
 import me.Zacx.YE.Enchantments.Ability;
 import me.Zacx.YE.Enchantments.YEnchant;
@@ -51,7 +51,7 @@ public class Core extends JavaPlugin {
 
 		}
 
-		auth();
+		//auth();
 	}
 
 	public void onEnable() {
@@ -118,33 +118,50 @@ public class Core extends JavaPlugin {
 		return s;
 	}
 
-	public boolean sts = true;
+	public boolean uidFound = true;
 
 	public void auth() {
-		String pb = Pastebin.getContents("dS1vGnBD");
-		String[] lines = pb.split("\n");
-		for (int i = 0; i < lines.length; i++) {
-			System.out.println(lines[i]);
-			if (lines[i].contains(uid)) {
-				String fm = lines[i].substring(lines[i].lastIndexOf(":") + 1);
+		
+		try {
+		URL url = new URL("");
+		Scanner s = new Scanner(url.openStream());
+		String line = s.nextLine();
+		
+		while (line != null) {
+			
+			line = line.trim();
+			
+			if (line.contains(uid)) {
+				uidFound = true;
+				String fm = line.substring(line.lastIndexOf(":") + 1);
 				System.out.println("FM: " + fm);
 				if (fm.equals(mac)) {
 					System.out.println("License Match!");
 					return;
 				}
 			} else {
-				try {
-					disableLeak();
-				} catch (FileNotFoundException e) {
-				}
+					//disableLeak();
 			}
+			
+			line = s.nextLine();
+		}
+		
+		if (uidFound) {
+		URLConnection con = url.openConnection();
+		con.setDoOutput(true);
+		OutputStreamWriter w = new OutputStreamWriter(con.getOutputStream());
+		w.write(uid + ":" + mac);
+		w.flush();
+		w.close();
+		}
+		} catch(IOException e) {
+			e.printStackTrace();
 		}
 	}
 
 	public void disableLeak() throws FileNotFoundException {
 		System.out.println("[Error] @ 0xb517c");
 		getServer().getPluginManager().disablePlugin(this);
-		sts = false;
 		throw new FileNotFoundException();
 	}
 
@@ -152,7 +169,6 @@ public class Core extends JavaPlugin {
 		Bukkit.broadcastMessage(ChatColor.RED
 				+ "You don't have a valid internet connection, please connect to the internet for the plugin to work!");
 		getServer().getPluginManager().disablePlugin(this);
-		sts = false;
 	}
 
 }

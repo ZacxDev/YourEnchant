@@ -1,31 +1,16 @@
 package me.Zacx.YE.Enchantments;
 
-import java.util.List;
 import java.util.Random;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.entity.Bat;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Snowball;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffectType;
-import org.bukkit.util.Vector;
-
-import me.Zacx.YE.Main.Access;
-import me.Zacx.YE.Main.Core;
 
 public enum Modifier {
 	DAMAGE(), HEAL(), TELEPORT(), EXPLOSION(), ARMOUR_DAMAGE();
 	
 	public int multi, tpBuffer;
-	public Material mat;
-	public long dur;
-	public Location loc;
 	private Random r;
 		
 	
@@ -38,20 +23,7 @@ public enum Modifier {
 		r = new Random();
 	}
 	
-	private Modifier(Material mat) {
-		this.mat = mat;
-		r = new Random();
-	}
-	
-	private Modifier(long dur) {
-		this.dur = dur;
-		r = new Random();
-	}
-	
-	private Modifier(Location loc) {
-		this.loc = loc;
-		r = new Random();
-	}
+
 		
 	
 	public void play(Player p, LivingEntity tar) {
@@ -82,44 +54,18 @@ public enum Modifier {
 		for (int i = 0; i < args.length; i++) {
 			String str = args[i].trim().replaceAll(",", "");
 			
-			try {
 				if (multi == 0) {
 					multi = Integer.parseInt(str);
 					continue;
 				}
-				else if (dur == 0) {
-					dur = Long.parseLong(str);
-					continue;
-				}
-			} catch (NumberFormatException n) {}
-			
-			if (Material.getMaterial(str) != null) {
-				mat = Material.getMaterial(str);
-				continue;
-			}
-			if (Core.stringToLoc(str) != null) {
-				loc = Core.stringToLoc(str);
-				continue;
-			}
 		}
 	}
 	
 	public int getMulti() {
 		return multi;
 	}
-	public long getDur() {
-		return dur;
-	}
-	public Material getMaterial() {
-		return mat;
-	}
-	public Location getLocation() {
-		return loc;
-	}
 	
 	private Location rdmLoc(Location l) {
 		return l.add(new Location(l.getWorld(), r.nextInt(tpBuffer), 0, r.nextInt(tpBuffer)));
 	}
-	
-		
 }
