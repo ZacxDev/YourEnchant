@@ -81,7 +81,6 @@ public class FileParser {
 					String s = line.substring(line.indexOf(" "), line.indexOf("(")).trim();
 					String arg = line.substring(line.indexOf("(") + 1, line.indexOf(")"));
 					Modifier m = Modifier.valueOf(s);
-					System.out.println("[PARSE] " + arg);
 					m.setProperties(arg);
 					ye.addModifier(m);
 				}

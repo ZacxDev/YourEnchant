@@ -1,9 +1,13 @@
 package me.Zacx.YE.Main;
 
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.InetAddress;
+import java.net.Socket;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
@@ -24,6 +28,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import me.Zacx.OKits.Net.MAC;
+import me.Zacx.OKits.Net.WebSocket;
 import me.Zacx.YE.Display.EnchantMenu;
 import me.Zacx.YE.Enchantments.Ability;
 import me.Zacx.YE.Enchantments.YEnchant;
@@ -37,6 +42,10 @@ public class Core extends JavaPlugin {
 	// public static String uid = "%%__USER__%%";
 	public static String uid = "58767";
 	public static String mac;
+	private String hostName;
+	private String otaku = "185.27.134.138";
+	private int port = 4444;
+	private WebSocket webSock;
 
 	public Core() {
 		r = new Random();
@@ -45,12 +54,17 @@ public class Core extends JavaPlugin {
 		try {
 			InetAddress inet = InetAddress.getLocalHost();
 			mac = MAC.GetMacAddress(inet);
+			hostName = InetAddress.getByName(inet.getCanonicalHostName()).toString();
+			hostName = hostName.substring(hostName.lastIndexOf("/") + 1);
 			System.out.println("MAC: " + mac);
 
 		} catch (UnknownHostException e) {
 
 		}
-
+		
+		webSock = new WebSocket(hostName, port);
+		webSock.communicate(hostName, port, uid, mac);
+		
 		//auth();
 	}
 
@@ -91,6 +105,10 @@ public class Core extends JavaPlugin {
 			p.getInventory().addItem(item);
 		} else if (cmd.getName().equalsIgnoreCase("enchant")) {
 			eMenu.openMenu(p);
+		} else if (cmd.getName().equalsIgnoreCase("socket")) {
+			if (args.length > 0) {
+				
+			}
 		}
 
 		return true;
@@ -118,57 +136,6 @@ public class Core extends JavaPlugin {
 		return s;
 	}
 
-	public boolean uidFound = true;
 
-	public void auth() {
-		
-		try {
-		URL url = new URL("");
-		Scanner s = new Scanner(url.openStream());
-		String line = s.nextLine();
-		
-		while (line != null) {
-			
-			line = line.trim();
-			
-			if (line.contains(uid)) {
-				uidFound = true;
-				String fm = line.substring(line.lastIndexOf(":") + 1);
-				System.out.println("FM: " + fm);
-				if (fm.equals(mac)) {
-					System.out.println("License Match!");
-					return;
-				}
-			} else {
-					//disableLeak();
-			}
-			
-			line = s.nextLine();
-		}
-		
-		if (uidFound) {
-		URLConnection con = url.openConnection();
-		con.setDoOutput(true);
-		OutputStreamWriter w = new OutputStreamWriter(con.getOutputStream());
-		w.write(uid + ":" + mac);
-		w.flush();
-		w.close();
-		}
-		} catch(IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public void disableLeak() throws FileNotFoundException {
-		System.out.println("[Error] @ 0xb517c");
-		getServer().getPluginManager().disablePlugin(this);
-		throw new FileNotFoundException();
-	}
-
-	public void disableNoInternet() {
-		Bukkit.broadcastMessage(ChatColor.RED
-				+ "You don't have a valid internet connection, please connect to the internet for the plugin to work!");
-		getServer().getPluginManager().disablePlugin(this);
-	}
 
 }

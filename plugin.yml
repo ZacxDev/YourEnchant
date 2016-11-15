@@ -8,3 +8,6 @@ commands:
    enchant:
       description: TestItem.
       usage: /<command>
+   socket:
+      description: TestItem.
+      usage: /<command>
