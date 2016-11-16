@@ -57,8 +57,10 @@ public class FileParser {
 					continue;
 				}
 								
-				if (line.startsWith("#"))
+				if (line.startsWith("#")) {
 					line = br.readLine();
+					continue;
+				}
 				
 				line = line.replaceAll("&", "§");
 				
