@@ -138,12 +138,12 @@ public class EventHandle implements Listener {
 					p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
 					current.setType(Material.AIR);
 				} else {
-					p.sendMessage("ï¿½4That item cannot use this enchantment!");
+					p.sendMessage("§4That item cannot use this enchantment!");
 				}
 
 			} else {
 				ArrayList<String> lore = new ArrayList<String>();
-				lore.add("ï¿½eï¿½l" + enchantmentName );
+				lore.add("§l" + enchantmentName );
 
 				meta.setLore(lore);
 				item.setItemMeta(meta);

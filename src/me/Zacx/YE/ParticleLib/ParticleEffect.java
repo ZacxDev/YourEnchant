@@ -521,6 +521,16 @@ public enum ParticleEffect {
 		}
 		return null;
 	}
+	
+	public static ParticleEffect getEffect(String name) {
+		name = name.replaceAll("_", "").toLowerCase();
+		for (int i = 0; i < values().length; i++) {
+			if (values()[i].getName().equalsIgnoreCase(name)) {
+				return values()[i];
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * Returns the particle effect with the given id

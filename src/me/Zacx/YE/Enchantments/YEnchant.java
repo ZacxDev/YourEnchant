@@ -18,7 +18,7 @@ import org.bukkit.potion.PotionEffectType;
 
 import me.Zacx.YE.Main.Access;
 import me.Zacx.YE.Main.Core;
-import me.Zacx.YE.Properties.ParticleHandler;
+import me.Zacx.YE.Properties.YEnchantParticle;
 
 public class YEnchant {
 
@@ -26,7 +26,7 @@ public class YEnchant {
 	
 	public String name, desc;
 	public int proc, max;
-	private ParticleHandler particle;
+	private String particle;
 	private PotionEffectType pEffect, tarEffect;
 	private Sound sound;
 	private EnchantmentType type;
@@ -48,10 +48,8 @@ public class YEnchant {
 	public void proc(Player p, LivingEntity tar, int lvl) {
 		
 		Location loc = p.getLocation();
-		System.out.println("dddd");
 		if (r.nextInt(100) <= proc) {
-			particle.play(p);
-			System.out.println(particle.name() + "ddddd");
+			YEnchantParticle.play(p, particle);
 			p.playSound(loc, sound, 1f, 1f);
 			p.addPotionEffect(new PotionEffect(pEffect, lvl, (5 * lvl)));
 			
@@ -69,21 +67,17 @@ public class YEnchant {
 		String p = "";
 		String s = line.substring(line.lastIndexOf(":") + 2);
 		line = line.toLowerCase();
-		if (line.contains("name") && name.equals("")) {
-			System.out.println(s);
-			//TODO name not working?
+		if (line.contains("name")) {
 			this.name = s;
 			p = "Name";
 		} else if (line.contains("desc")) {
 			this.desc = s;
-			System.out.println(desc);
 			p = "Lore";
 		} else if (line.contains("procrate")) {
 			this.proc = Integer.parseInt(s);
 			p = "Proc Rate";
 		} else if (line.contains("particle")) {
-			//TODO
-			particle = ParticleHandler.valueOf(s);
+			particle = s;
 		} else if (line.contains("playerpotion")) {
 			pEffect = PotionEffectType.getByName(s);
 			p = "effect";

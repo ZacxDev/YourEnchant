@@ -31,7 +31,6 @@ public enum Ability {
 		List<UUID> uids = new ArrayList<UUID>(cooldowns.keySet());
 		for (int i = 0; i < uids.size(); i++) {
 			cooldowns.put(uids.get(i), cooldowns.get(uids.get(i)) - 1);
-			System.out.println(uids.get(i) + " " + i + " " + this.name());
 			if (cooldowns.get(uids.get(i)) <= 0) {
 				cooldowns.remove(uids.get(i));
 			}
@@ -44,7 +43,6 @@ public enum Ability {
 		if (cooldowns.containsKey(p.getUniqueId())) {
 			return;
 		} else {
-			System.out.println("d");
 			cooldowns.put(p.getUniqueId(), cooldown);
 		}
 			
@@ -67,7 +65,6 @@ public enum Ability {
 		try {
 			for (int i = 0; i < args.length; i++) {
 				String s = args[i].trim().replaceAll(",", "");
-				System.out.println(s);
 				if (mat == null && Material.getMaterial(s) != null && this == LAUNCH) {
 					mat = Material.getMaterial(s);
 					continue;
@@ -82,7 +79,6 @@ public enum Ability {
 				}
 				if (cooldown == 0) {
 					cooldown = Long.parseLong(s);
-					System.out.println(cooldown);
 					continue;
 				}
 			}
