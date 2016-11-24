@@ -24,7 +24,7 @@ public class YEnchant {
 
 	public static List<YEnchant> enchants = new ArrayList<YEnchant>();
 	
-	public String name, desc;
+	public String name, desc, displayName;
 	public int proc, max;
 	private String particle;
 	private PotionEffectType pEffect, tarEffect;
@@ -68,7 +68,8 @@ public class YEnchant {
 		String s = line.substring(line.lastIndexOf(":") + 2);
 		line = line.toLowerCase();
 		if (line.contains("name")) {
-			this.name = s;
+			this.name = Core.parseCustomEnchant(s);
+			this.displayName = s;
 			p = "Name";
 		} else if (line.contains("desc")) {
 			this.desc = s;
@@ -100,9 +101,9 @@ public class YEnchant {
 	}
 	
 	public ItemStack getItem(String level) {
-		item = Access.buildItem(Material.BOOK, 1, 0, this.name, this.desc, null, null);
+		item = Access.buildItem(Material.BOOK, 1, 0, this.displayName, this.desc, null, null);
 		ItemMeta meta = item.getItemMeta();
-		meta.setDisplayName(name + " " + level);
+		meta.setDisplayName(displayName + " " + level);
 		item.setItemMeta(meta);
 		return item;
 	}
@@ -166,5 +167,13 @@ public class YEnchant {
 			}
 		}
 		return r;
+	}
+	
+	public boolean canApply(Material mat) {
+		for (int i = 0; i < type.types.length; i++) {
+			if (type.types[i] == mat)
+				return true;
+		}
+		return false;
 	}
 }

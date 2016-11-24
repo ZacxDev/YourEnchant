@@ -25,6 +25,9 @@ public enum TypeLists {
 	
 	private static Material[] combine(Material[] tar, Material[] src) {
 		Material[] r = new Material[tar.length + src.length];
+		for (int i = 0; i < tar.length; i++) {
+			r[i] = tar[i];
+		}
 		for (int i = 0; i < src.length; i++) {
 			r[tar.length + i] = src[i];
 		}

@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -25,13 +26,20 @@ import me.Zacx.YE.Main.Access;
 
 public class EnchantMenu implements Listener {
 
-	private Random r;
+	public static List<EnchantMenu> menus = new ArrayList<EnchantMenu>();
+	
+	private static Random r;
+	private String user;
 	private Inventory inv;
-	private ItemStack fill, dia;
+	private static ItemStack fill, dia;
+	private static boolean firstInit = true;;
 	
 	private List<UUID> animating = new ArrayList<UUID>();
 
-	public EnchantMenu() {
+	public EnchantMenu(Player p) {
+		
+		if (firstInit) {
+			firstInit = false;
 		r= new Random();
 		Access.c.getServer().getPluginManager().registerEvents(this, Access.c);
 		fill = new ItemStack(Material.STAINED_GLASS_PANE, 1,
@@ -47,9 +55,11 @@ public class EnchantMenu implements Listener {
 		lore.add("§fThis will give you a random custom enchanted book.");
 		meta.setLore(lore);
 		dia.setItemMeta(meta);
+		}
 		
 		inv = Bukkit.createInventory(null, 9, "Enchant");
-
+		user = p.getUniqueId().toString();
+		menus.add(this);
 	}
 
 	public void openMenu(Player p) {
@@ -99,18 +109,29 @@ public class EnchantMenu implements Listener {
 		}, 0L, 1L);
 	}
 	
+	public static EnchantMenu getMenu(String uid) {
+		for (int i = 0; i < menus.size(); i++) {
+			EnchantMenu menu = menus.get(i);
+			if (menu.user.equalsIgnoreCase(uid))
+				return menu;
+		}
+		return null;
+	}
+	
 	@EventHandler
 	public void onClick(InventoryClickEvent e) {
 		
 		Player p = (Player) e.getWhoClicked();
 		ItemStack item = e.getCurrentItem();
+		EnchantMenu menu = null;
 		
 		if (item != null && item.getType() != Material.AIR) {
 			if (e.getInventory().getName().equalsIgnoreCase(inv.getName())) {
+				menu = EnchantMenu.getMenu(p.getUniqueId().toString());
 				e.setCancelled(true);
 				if (item.getType() == Material.DIAMOND) {
 				if (p.getLevel() >= 30) {
-					animate(p, 20 * 3L);
+					menu.animate(p, 20 * 3L);
 					p.setLevel(p.getLevel() - 30);
 				} else 
 					p.sendMessage("§cYou must be level 30!");
@@ -131,5 +152,16 @@ public class EnchantMenu implements Listener {
 			}
 			}
 		}	
+	}
+	
+	@EventHandler
+	public void onClose(InventoryCloseEvent e) {
+		
+		Player p = (Player) e.getPlayer();
+		Inventory inv = e.getInventory();
+		
+		if (inv.getName().equalsIgnoreCase(this.inv.getName())) {
+			EnchantMenu.menus.remove(EnchantMenu.getMenu(p.getUniqueId().toString()));
+		}
 	}
 }

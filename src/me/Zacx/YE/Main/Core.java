@@ -37,7 +37,6 @@ import me.Zacx.YE.Files.FileParser;
 public class Core extends JavaPlugin {
 
 	private FileParser fp;
-	private EnchantMenu eMenu;
 	private Random r;
 	// public static String uid = "%%__USER__%%";
 	public static String uid = "58767";
@@ -72,7 +71,6 @@ public class Core extends JavaPlugin {
 		fp = new FileParser();
 		fp.parseEnchants();
 		new EventHandle(this);
-		eMenu = new EnchantMenu();
 
 		Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this,
 				new Runnable() {
@@ -104,11 +102,9 @@ public class Core extends JavaPlugin {
 			item.setItemMeta(meta);
 			p.getInventory().addItem(item);
 		} else if (cmd.getName().equalsIgnoreCase("enchant")) {
-			eMenu.openMenu(p);
+			new EnchantMenu(p).openMenu(p);
 		} else if (cmd.getName().equalsIgnoreCase("socket")) {
-			if (args.length > 0) {
-				
-			}
+			p.getInventory().addItem(YEnchant.enchants.get(0).getItem(1 + ""));
 		}
 
 		return true;

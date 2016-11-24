@@ -99,24 +99,31 @@ public class EventHandle implements Listener {
 	
 	
 	public boolean hasEnchantment(ItemStack item, String enchantmentName,
-			int level, ArrayList<String> lore) {
-		ItemMeta meta = item.getItemMeta();
-		boolean toReturn = false;
-		for (String line : meta.getLore()) {
-			if (!line.contains(enchantmentName)) {
-				toReturn = false;
-			} else {
-				toReturn = true;
-				break;
+			int level) {
+		String tar = enchantmentName.substring(0, enchantmentName.lastIndexOf(" "));
+		
+		if (item.hasItemMeta() && item.getItemMeta().hasLore()) {
+		List<String> lore = item.getItemMeta().getLore();
+		for (String line : lore) {
+			if (line.contains(tar)) {
+				return true;
 			}
 		}
-		return toReturn;
+		}
+		return false;
 	}
 	
 	
 	public void applyEnchantment(ItemStack target, ItemStack current, Player p, int slot) {
 
 		String currentName = current.getItemMeta().getDisplayName();
+		String raw = Core.parseCustomEnchant(currentName.substring(0, currentName.lastIndexOf(" ")));
+
+		YEnchant ench = null;
+		if (YEnchant.getEnchant(raw) != null) {
+			ench = YEnchant.getEnchant(raw);
+		} else 
+			return;
 		
 		String enchantmentName = Core.parseCustomEnchant(currentName);
 		int level = Integer.parseInt(Core.parseCustomEnchant(currentName.substring(currentName.lastIndexOf(" ")).trim()));
@@ -125,25 +132,24 @@ public class EventHandle implements Listener {
 		int destroy = getDestroyRate(current);
 		int d = r.nextInt(100);
 	
+		if (ench.canApply(target.getType())) {
+		if (this.hasEnchantment(target, enchantmentName, level) == false) {
 		if (s <= success) {
 			// enchant clicked item
 			ItemStack item = target;
 			ItemMeta meta = item.getItemMeta();
 			if (item.hasItemMeta() && item.getItemMeta().hasLore()) {
 				ArrayList<String> lore = (ArrayList<String>) meta.getLore();
-				if (this.hasEnchantment(target, enchantmentName, level, lore) == false) {
-					lore.add(enchantmentName);
+					lore.add(currentName);
 					meta.setLore(lore);
 					item.setItemMeta(meta);
 					p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
 					current.setType(Material.AIR);
-				} else {
-					p.sendMessage("§4That item cannot use this enchantment!");
-				}
+				
 
 			} else {
 				ArrayList<String> lore = new ArrayList<String>();
-				lore.add("§l" + enchantmentName );
+				lore.add(currentName);
 
 				meta.setLore(lore);
 				item.setItemMeta(meta);
@@ -151,16 +157,20 @@ public class EventHandle implements Listener {
 				current.setType(Material.AIR);
 
 			}
-			p.getInventory().remove(target);
+			p.getInventory().clear(slot);
 			p.getInventory().addItem(item);
 		} else {
 			if (d <= destroy) {
 				p.playSound(p.getLocation(), Sound.BLOCK_ANVIL_BREAK, 1, 1);
-				target.setType(Material.AIR);
+				p.getInventory().clear(slot);
 				System.out.println("item shoudl be ded");
 			}
 			current.setType(Material.AIR);
 		}
+	} else
+		p.getInventory().addItem(current);
+		} else 
+			p.getInventory().addItem(current);
 	}
 	
 	public int getSuccessRate(ItemStack item) {
@@ -199,7 +209,12 @@ public class EventHandle implements Listener {
 		
 		if (current != null && cursor != null && cursor.getType() == Material.BOOK && current.getType() != Material.AIR && cursor.hasItemMeta()) {
 			e.setCancelled(true);
-			applyEnchantment(current, cursor, p, e.getRawSlot());
+			
+			int s = e.getRawSlot();
+			if (s > 35)
+				s -= 36;
+			applyEnchantment(current, cursor, p, s);
+			
 		}
 		
 		
